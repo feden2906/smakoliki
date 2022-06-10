@@ -1,1 +1,1 @@
-# smakoliki super shop
+# smakoliki
