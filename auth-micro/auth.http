@@ -1,0 +1,96 @@
+### signup -> Send POST
+POST {{host}}/signup
+Content-Type: application/json
+
+{
+  "firstName": "{{firstName}}",
+  "lastName": "{{lastName}}",
+  "email": "{{email1}}",
+  "password": "{{password}}",
+  "repeatPassword": "{{password}}"
+}
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 200");
+});
+%}
+
+### login -> Send POST
+POST {{host}}/login
+Content-Type: application/json
+
+{
+  "email": "{{email1}}",
+  "password": "{{password}}"
+}
+> {%
+client.global.set("accessToken", response.body.data.accessToken);
+client.global.set("refreshToken", response.body.data.refreshToken);
+
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 200");
+});
+%}
+
+### profile -> Send GET
+GET {{host}}/me
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### refresh -> Send POST
+POST {{host}}/refresh
+Content-Type: application/json
+Authorization: Bearer {{refreshToken}}
+
+> {%
+client.global.set("accessToken", response.body.data.accessToken);
+client.global.set("refreshToken", response.body.data.refreshToken);
+
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 200");
+});
+%}
+
+### logout -> Send PUT
+PUT {{host}}/logout
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+> {%
+client.global.set("accessToken", response.body.data.accessToken);
+client.global.set("refreshToken", response.body.data.refreshToken);
+%}
+
+### login -> Send POST
+POST {{host}}/login
+Content-Type: application/json
+
+{
+  "email": "{{email1}}",
+  "password": "{{password}}"
+}
+
+> {%
+client.global.set("accessToken", response.body.data.accessToken);
+client.global.set("refreshToken", response.body.data.refreshToken);
+%}
+
+### updateAuth -> Send PATCH
+PATCH {{host}}/update-auth
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "firstName": "{{firstName}}",
+  "lastName": "{{lastName}}",
+  "email": "{{email1}}",
+  "password": "{{password}}",
+  "picture": "{{password}}"
+}
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+###
