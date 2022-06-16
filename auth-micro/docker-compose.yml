@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  auth-api:
+    container_name: auth-api
+    build: .
+    command: npm run start:dev
+    environment:
+      - SERVICE_PORT=${SERVICE_PORT}
+      - SERVICE_HOST=${SERVICE_HOST_DOC}
+      - SERVICE_GLOBAL_PREFIX=${SERVICE_GLOBAL_PREFIX}
+      - SERVICE_NAME=${SERVICE_NAME}
+      - TYPEORM_CONNECTION=${POSTGRES_CONNECTION}
+      - TYPEORM_USERNAME=${POSTGRES_USERNAME}
+      - TYPEORM_PASSWORD=${POSTGRES_PASSWORD}
+      - TYPEORM_DATABASE=${POSTGRES_DATABASE}
+      - TYPEORM_HOST=postgres
+      - TYPEORM_PORT=${POSTGRES_PORT}
+    volumes:
+      - ./src:/app/src
+    ports:
+      - ${SERVICE_PORT}:${SERVICE_PORT}
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    container_name: postgres
+    image: postgres:14.0-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
